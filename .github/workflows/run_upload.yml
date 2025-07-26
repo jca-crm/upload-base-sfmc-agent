@@ -1,0 +1,32 @@
+name: Run Upload ETL
+
+# Trigger this workflow manually from GitHub or schedule it via cron. The schedule is commented out for now.
+on:
+  workflow_dispatch:
+    inputs: {}
+  # schedule:
+  #   - cron: "0 2 * * *"  # Runs at 02:00 UTC daily
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install MS SQL ODBC driver
+        uses: badboy17a/install-mssql-odbc@v1
+        with:
+          installunixodbc: true
+          addtosystemdefault: true
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute ETL scripts
+        run: python main.py
